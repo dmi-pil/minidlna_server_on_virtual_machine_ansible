@@ -1,0 +1,56 @@
+- hosts: web
+  tasks:
+    - name: Update system
+      apt: update_cache=yes
+      become: yes
+    
+    - name: Upgrade system
+      apt: upgrade=full
+      become: yes
+
+    - name : install minidlna
+      apt: name={{item}} state=latest
+      with_items:
+          - minidlna
+      become: yes
+    
+    - name: create dir fo files 
+      file:
+        path: /home/vagrant/Dlna 
+        state: directory 
+        owner: vagrant
+        group: vagrant
+      become: yes
+     
+    - name: create dir for base
+      file: path=/var/cache/minidlna state=directory  
+      become: yes
+
+    - lineinfile: dest=/etc/minidlna.conf regexp='media_dir=/var/lib/minidlna' line='media_dir=/home/vagrant/Dlna' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#db_dir=/var/cache/minidlna' line='db_dir=/var/cache/minidlna' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#log_dir=/var/log' line='log_dir=/var/log' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#network_interface=' line='network_interface=eth1' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#friendly_name=' line='friendly_name=Dlna_test_server' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#inotify=yes' line='inotify=yes' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#strict_dlna=no' line='strict_dlna=no' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#enable_tivo=no' line='enable_tivo=yes' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#notify_interval=895' line='notify_interval=895' state=present
+      become: yes
+    - lineinfile: dest=/etc/minidlna.conf regexp='#max_connections=50' line='max_connections=10' state=present
+      become: yes
+    
+    - name: restart base minidlna
+      shell: service minidlna force-reload
+      become: yes
+
+    - name: restart service minidlna
+      shell: service minidlna restart
+      become: yes

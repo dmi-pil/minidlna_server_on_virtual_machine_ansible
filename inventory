@@ -1,0 +1,2 @@
+[web]
+node1 ansible_ssh_host=10.10.1.6 ansible_ssh_private_key_file=/home/user/Develop/vagrant_ubuntu/.vagrant/machines/node1/virtualbox/private_key
